@@ -26,7 +26,6 @@ export default function PokemonFilters({
         name: name || undefined,
         types: selectedTypes.length > 0 ? selectedTypes : undefined,
         limit,
-        page: 1, // Reset to first page when filters change
       });
     }, 300);
 
@@ -43,7 +42,7 @@ export default function PokemonFilters({
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-      <h2 className="text-xl font-bold mb-4">Filters</h2>
+      <h2 className="text-xl font-bold mb-4">Filtre</h2>
       
       <div className="mb-4">
         <label htmlFor="name-filter" className="block text-sm font-medium text-gray-700 mb-1">
@@ -61,7 +60,7 @@ export default function PokemonFilters({
       
       <div className="mb-4">
         <label htmlFor="limit-filter" className="block text-sm font-medium text-gray-700 mb-1">
-          Pokemon per page
+          Pokemon par page
         </label>
         <select
           id="limit-filter"
@@ -77,7 +76,7 @@ export default function PokemonFilters({
       </div>
       
       <div>
-        <p className="block text-sm font-medium text-gray-700 mb-2">Pokemon Types</p>
+        <p className="block text-sm font-medium text-gray-700 mb-2">Pokemon type</p>
         <div className="flex flex-wrap gap-2">
           {(types || []).map((type) => (
             <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { fetchPokemonList, fetchPokemonTypes } from "@/api/pokemonApi";
 import { Pokemon, PokemonFilters, PokemonType } from "@/types/pokemon";
 import PokemonCard from "@/components/PokemonCard";
@@ -9,6 +9,8 @@ import PokemonFiltersComponent from "@/components/PokemonFilters";
 export default function Home() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [types, setTypes] = useState<PokemonType[]>([]);
+  const isFetchingRef = useRef(false);
+
   const [filters, setFilters] = useState<PokemonFilters>({
     page: 1,
     limit: 50,
@@ -39,24 +41,36 @@ export default function Home() {
       try {
         setLoading(true);
         setError(null);
-        
-        console.log("Fetching Pokemon with filters:", filters);
+  
         const response = await fetchPokemonList(filters);
-        console.log("API Response:", response);
-        
-        setPokemons(response.results || []);
-        console.log("Pokemon set:", response.results || []);
+  
+        setPokemons(prev =>
+          filters.page === 1
+            ? response.results || []
+            : [...prev, ...(response.results || [])]
+        );
         setHasMore(!!response.next);
       } catch (err) {
         setError("Failed to load Pokemon list. Please try again later.");
-        console.error("Error fetching Pokemon:", err);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
+        isFetchingRef.current = false; 
       }
     };
-    
+  
     getPokemons();
   }, [filters]);
+  
+
+  const loadMorePokemons = useCallback(() => {
+    if (!hasMore || loadingMore || isFetchingRef.current) return;
+  
+    isFetchingRef.current = true;
+    setLoadingMore(true);
+    setFilters(prev => ({ ...prev, page: prev.page + 1 }));
+  }, [hasMore, loadingMore]);
+  
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -77,32 +91,7 @@ export default function Home() {
         observer.unobserve(observerTarget.current);
       }
     };
-  }, [hasMore, loading, loadingMore, pokemons]);
-
-  const loadMorePokemons = async () => {
-    if (!hasMore || loadingMore) return;
-    
-    try {
-      setLoadingMore(true);
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const nextPage = filters.page ? filters.page + 1 : 2;
-      const response = await fetchPokemonList({
-        ...filters,
-        page: nextPage,
-      });
-      
-      setPokemons(prev => [...prev, ...(response.results || [])]);
-      setFilters(prev => ({ ...prev, page: nextPage }));
-      setHasMore(!!response.next);
-    } catch (err) {
-      setError("Failed to load more Pokemon. Please try again later.");
-      console.error(err);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+  }, [hasMore, loading, loadingMore, loadMorePokemons]);
 
   const handleFilterChange = (newFilters: PokemonFilters) => {
     setFilters(newFilters);
@@ -112,8 +101,8 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-blue-600 text-white py-6 shadow-md">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold">Pokédex</h1>
-          <p className="text-blue-100">Explore the world of Pokémon</p>
+          <h1 className="text-3xl font-bold">Pokémon</h1>
+          <p className="text-blue-100">Explore le monde des Pokémon</p>
         </div>
       </header>
       
@@ -134,7 +123,7 @@ export default function Home() {
         
         {pokemons.length === 0 && !loading ? (
           <div className="text-center py-10">
-            <p className="text-gray-500 text-lg">No Pokémon found. Try adjusting your filters.</p>
+            <p className="text-gray-500 text-lg">Aucun Pokémon trouve.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -148,7 +137,7 @@ export default function Home() {
         
         {loadingMore && (
           <div className="text-center py-4">
-            <p className="text-blue-500">Loading more Pokémon...</p>
+            <p className="text-blue-500">Chargement des Pokémon..</p>
           </div>
         )}
         

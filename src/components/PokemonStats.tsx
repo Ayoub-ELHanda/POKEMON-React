@@ -1,10 +1,19 @@
 import { PokemonStat } from "@/types/pokemon";
+import { useState, useEffect, useCallback } from "react";
 
 interface PokemonStatsProps {
   stats: PokemonStat[];
 }
 
 export default function PokemonStats({ stats }: PokemonStatsProps) {
+  const [filters, setFilters] = useState<{ type?: string }>({});
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pokemons, setPokemons] = useState<PokemonStat[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const getStatColor = (statName: string): string => {
     const colors: Record<string, string> = {
       hp: "bg-red-500",
@@ -44,6 +53,37 @@ export default function PokemonStats({ stats }: PokemonStatsProps) {
     
     return acc;
   }, []);
+
+  const handleFilterChange = (newFilters: PokemonFilters) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
+
+  const loadMorePokemons = useCallback(() => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    setPage(prev => prev + 1);
+  }, [hasMore, loadingMore]);
+
+  useEffect(() => {
+    const getPokemons = async () => {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetchPokemonList({ ...filters, page, limit: 50 });
+
+      setPokemons(prev =>
+        page === 1
+          ? response.results || []
+          : [...prev, ...(response.results || [])]
+      );
+      setHasMore(!!response.next);
+      setLoading(false);
+      setLoadingMore(false);
+    };
+
+    getPokemons();
+  }, [filters, page]);
 
   return (
     <div className="space-y-4">

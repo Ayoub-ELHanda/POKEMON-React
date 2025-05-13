@@ -1,6 +1,7 @@
 import { Pokemon } from "@/types/pokemon";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useCallback } from "react";
 
 interface PokemonEvolutionsProps {
   evolutions: Pokemon[];
@@ -15,7 +16,7 @@ export default function PokemonEvolutions({
     return (
       <div className="mt-6">
         <h3 className="text-xl font-bold mb-4">Evolutions</h3>
-        <p className="text-gray-500">This Pokemon has no evolutions.</p>
+        <p className="text-gray-500">Aucune évolution disponible pour ce Pokémon.</p>
       </div>
     );
   }
@@ -40,13 +41,13 @@ export default function PokemonEvolutions({
                 <Image
                   src={pokemon.image}
                   alt={pokemon.name}
-                  fill
-                  sizes="96px"
-                  className="object-contain"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-contain rounded-full bg-white"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-full">
-                  <span className="text-gray-400 text-xs">No image</span>
+                  <span className="text-gray-400 text-xs">{pokemon.image}</span>
                 </div>
               )}
             </div>

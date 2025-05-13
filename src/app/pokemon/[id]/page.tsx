@@ -63,7 +63,7 @@ export default function PokemonDetailPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              Back to Pokédex
+              Retour à la liste
             </button>
             
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -96,8 +96,8 @@ export default function PokemonDetailPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              Back to Pokédex
-            </button>
+              Retour à la liste
+              </button>
           </div>
           
           <div className="bg-blue-500 text-white p-6">
@@ -130,19 +130,19 @@ export default function PokemonDetailPage() {
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-blue-200">Height</p>
+                    <p className="text-blue-200">hauteur </p>
                     <p className="font-medium">
                       {pokemon.height ? `${(pokemon.height / 10).toFixed(1)} m` : 'Unknown'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-blue-200">Weight</p>
+                    <p className="text-blue-200">largeur</p>
                     <p className="font-medium">
                       {pokemon.weight ? `${(pokemon.weight / 10).toFixed(1)} kg` : 'Unknown'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-blue-200">Abilities</p>
+                    <p className="text-blue-200">capacités</p>
                     <p className="font-medium capitalize">
                       {(pokemon.abilities && pokemon.abilities.length > 0) 
                         ? pokemon.abilities.join(", ") 
