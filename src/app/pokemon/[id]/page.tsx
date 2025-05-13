@@ -63,7 +63,7 @@ export default function PokemonDetailPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              Retour à la liste
+              Retour
             </button>
             
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -96,7 +96,7 @@ export default function PokemonDetailPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              Retour à la liste
+              Retour
               </button>
           </div>
           
